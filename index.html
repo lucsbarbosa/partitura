@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sheet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 50px;
+        }
+
+        .tab {
+            height: 150px;
+            width: 1000px;
+            display: flex;
+            border-right: 1px black solid;
+        }
+
+        .compass {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-left: 1px black solid;
+        }
+
+        .line, .space {
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .line {
+            height: 1px;
+            background-color: black;
+        }
+
+        .space {
+            flex: 1;
+        }
+
+        .symbol {
+            position: absolute;
+            height: 30px;
+        }
+
+        #run {
+            font-size: 24px;
+            padding: 10px 30px;
+            cursor: pointer;
+            border-radius: 5px;
+            outline: none;
+            border: 1px black solid;
+            background-color: lime;
+        }
+
+        #run:hover {
+            background-color: limegreen;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="tab">
+        <div class="compass">
+            <div class="line f4 note"></div>
+            <div class="space e4 note"></div>
+            <div class="line d4 note"></div>
+            <div class="space c4 note"></div>
+            <div class="line b3 note"></div>
+            <div class="space a3 note"></div>
+            <div class="line g3 note"></div>
+            <div class="space f3 note"></div>
+            <div class="line e3 note"></div>
+        </div>
+        <div class="compass">
+            <div class="line f4 note"></div>
+            <div class="space e4 note"></div>
+            <div class="line d4 note"></div>
+            <div class="space c4 note"></div>
+            <div class="line b3 note"></div>
+            <div class="space a3 note"></div>
+            <div class="line g3 note"></div>
+            <div class="space f3 note"></div>
+            <div class="line e3 note"></div>
+        </div>
+        <div class="compass">
+            <div class="line f4 note"></div>
+            <div class="space e4 note"></div>
+            <div class="line d4 note"></div>
+            <div class="space c4 note"></div>
+            <div class="line b3 note"></div>
+            <div class="space a3 note"></div>
+            <div class="line g3 note"></div>
+            <div class="space f3 note"></div>
+            <div class="line e3 note"></div>
+        </div>
+        <div class="compass">
+            <div class="line f4 note"></div>
+            <div class="space e4 note"></div>
+            <div class="line d4 note"></div>
+            <div class="space c4 note"></div>
+            <div class="line b3 note"></div>
+            <div class="space a3 note"></div>
+            <div class="line g3 note"></div>
+            <div class="space f3 note"></div>
+            <div class="line e3 note"></div>
+        </div>
+        <div class="compass">
+            <div class="line f4 note"></div>
+            <div class="space e4 note"></div>
+            <div class="line d4 note"></div>
+            <div class="space c4 note"></div>
+            <div class="line b3 note"></div>
+            <div class="space a3 note"></div>
+            <div class="line g3 note"></div>
+            <div class="space f3 note"></div>
+            <div class="line e3 note"></div>
+        </div>
+        <div class="compass">
+            <div class="line f4 note"></div>
+            <div class="space e4 note"></div>
+            <div class="line d4 note"></div>
+            <div class="space c4 note"></div>
+            <div class="line b3 note"></div>
+            <div class="space a3 note"></div>
+            <div class="line g3 note"></div>
+            <div class="space f3 note"></div>
+            <div class="line e3 note"></div>
+        </div>
+        <div class="compass">
+            <div class="line f4 note"></div>
+            <div class="space e4 note"></div>
+            <div class="line d4 note"></div>
+            <div class="space c4 note"></div>
+            <div class="line b3 note"></div>
+            <div class="space a3 note"></div>
+            <div class="line g3 note"></div>
+            <div class="space f3 note"></div>
+            <div class="line e3 note"></div>
+        </div>
+        <div class="compass">
+            <div class="line f4 note"></div>
+            <div class="space e4 note"></div>
+            <div class="line d4 note"></div>
+            <div class="space c4 note"></div>
+            <div class="line b3 note"></div>
+            <div class="space a3 note"></div>
+            <div class="line g3 note"></div>
+            <div class="space f3 note"></div>
+            <div class="line e3 note"></div>
+        </div>
+    </div>
+    <button id="run">Play</button>
+    <script>
+        const lines = document.querySelectorAll('.line');
+        const spaces = document.querySelectorAll('.space');
+        const run = document.querySelector("#run");
+
+        const hertz = {
+            'e3': 329.627533,
+            'f3': 349.228241,
+            'g3': 391.995392,
+            'a3': 440,
+            'b3': 493.883301,
+            'c4': 523.251099,
+            'd4': 587.329529,
+            'e4': 659.255127,
+            'f4': 698.456482
+        }
+
+        const context = new AudioContext();
+        const timer = ms => new Promise(res => setTimeout(res, ms))
+
+        lines.forEach(line => addNote(line));
+        spaces.forEach(space => addNote(space));
+
+        run.addEventListener("click", () => {
+            const compasses = document.querySelectorAll(".compass");
+            (async function() {
+                for (const compass of compasses) {
+                    const notes = []
+                    for (const note of compass.children) {
+                        if (note.children.length != 0) {
+                            const oscillator = context.createOscillator();
+                            oscillator.frequency.value = hertz[note.classList[1]];
+                            oscillator.connect(context.destination);
+                            notes.push(oscillator);
+                        }
+                    }
+                    for (const oscillator of notes) {
+                        oscillator.start();
+                    }
+
+                    await timer(1000);
+
+                    for (const oscillator of notes) {
+                        oscillator.stop();
+                    }
+                }
+            })();
+
+        })
+
+        function addNote(element) {
+            element.addEventListener('click', () => {
+                const note = document.createElement("img");
+                note.src = "note.png";
+                note.classList.add("symbol");
+                element.appendChild(note);
+            })
+        }
+    </script>
+</body>
+</html>
